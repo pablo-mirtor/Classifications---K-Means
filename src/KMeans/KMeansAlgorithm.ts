@@ -2,28 +2,39 @@ import Sample from "../DataStructures/Sample";
 
 const tolerancia: number = 0.1;
 const b: number = 2;
-const center1 = new Sample(4.6,3.0,4.0,0.0,"");
-const center2 = new Sample(6.8,3.4,4.6,0.7,"");
+const center1 = new Sample(4.6,3.0,4.0,0.0,"Iris-Setosa");
+const center2 = new Sample(6.8,3.4,4.6,0.7,"Iris-Versicolor");
 
 class KMeansAlgorithm{
     private muestras: Array<Sample>;
     private centers: Array<Sample>;
-    constructor(m: Array<Sample>, c: Array<Sample>){
+    constructor(m: Array<Sample>){
         this.centers = new Array<Sample>();
         this.centers.push(center1, center2);
         this.muestras = m;
-        this.calcCenters();
+        if(this.muestras.length > 1)
+            this.calcCenters();
     }
 
+    initializeArray(): number[][]{
+        let u: number[][] = [];
+        for (let i = 0; i < this.centers.length; i++) {
+            u[i] = [];
+            for (let j = 0; j < this.centers[0].getData().length; j++) {
+                u[i][j] = 0;
+            }
+        }
+        return u;
+    }
     updateCenters(): boolean{
         let ready: boolean = true;
-        let u: number[][];
-        let mNum: number = 0;
+        let u: number[][]= this.initializeArray();
         this.muestras.forEach((m, ind)=>{
-            let ds: Array<number> = new Array<number>(this.centers.length);
+            let ds: Array<number> = new Array<number>();
             let acum: number = 0.0;
             this.centers.forEach(c=>{
-                let d = c.getData().reduce((a, b, i) => {return a + Math.pow(b - c.getData()[i], 2)}, 0.0);
+                let d = c.getData().reduce((a, num, i, vec) => {
+                    return a + Math.pow(num - m.getData()[i], 2)}, 0.0);
                 ds.push(Math.pow(1/d, 1/(b-1)));
                 acum += Math.pow(1/d, 1/(b-1));
             });
@@ -60,10 +71,9 @@ class KMeansAlgorithm{
         {
             ready = this.updateCenters();
         }
-
     }
 
-    pertenencia(muestra: Sample): void {
+    pertenencia(muestra: Sample): string {
         let acumulados: Array<number> = new Array<number>();
         let acumD: number = 0.0;
         this.centers.forEach(c => {
@@ -85,9 +95,11 @@ class KMeansAlgorithm{
             }
             return d;
         });
-        if (indMax != -1){
-            console.log("muestra");
+        if (indMax !== -1){
+            console.log(this.centers[indMax].getClassName())
+            return this.centers[indMax].getClassName();
         }
+        else return "0";
     }
 }
 

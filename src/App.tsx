@@ -1,80 +1,111 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import KMeans from "./KMeans/KMeans";
 import Sample from "./DataStructures/Sample";
+import Iris2Clases from "./Iris2Clases";
+import {ReactComponent as Loading} from './Assets/spinner.svg';
 
 const atributos = ["sepal length", "sepal width", "petal length", "petal witdh", "class"];
-const data = {};
+const datos = [] as any;
 //Context with global data
-const dataContext = React.createContext(data);
+const dataContext = React.createContext(datos);
 
-class App extends React.Component {
+interface AppProps {
+}
+
+interface AppState {
+    datos: Sample[],
+    isLoaded: boolean,
+    sl: number,
+    sw: number,
+    pl: number,
+    pw: number,
+    test: Sample,
+    runTest: boolean
+}
+class App extends React.Component<AppProps, AppState> {
     private fileDataInput: React.RefObject<HTMLInputElement>;
-    state = {datos: {}, disabled: false}
+
     constructor(props: object) {
         super(props);
         this.fileDataInput = React.createRef();
-        this.handleSubmit = this.handleSubmit.bind(this);
+        //this.createArray = this.createArray.bind(this);
+        this.state = {datos: this.createArray(Iris2Clases), isLoaded: false, sl: 5.1, sw: 3.5, pl: 1.4, pw: 0.2, test: new Sample(-1,-1,-1,-1, ""), runTest: false};
+        this.createArray(Iris2Clases);
+        this.submitSample = this.submitSample.bind(this);
+        this.handleChangeSL = this.handleChangeSL.bind(this);
+        this.handleChangePL = this.handleChangePL.bind(this);
+        this.handleChangeSW = this.handleChangeSW.bind(this);
+        this.handleChangePW = this.handleChangePW.bind(this);
     }
 
-    handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        this.setState({datos: {}, disabled: true})
+    componentDidMount() {
+        setTimeout(() => {
+            this.setState({isLoaded: true});
+        }, 2000)
+
+    }
+
+    createArray(d: any[]): Array<Sample>{
+        let result: Array<Sample> = new Array<Sample>();
+        d.forEach(r => {
+            result.push(new Sample(r["Sepal Length"], r["Sepal Width"], r["Petal Length"], r["Petal Length"], r["ClassName"]));
+        });
+        return result;
+    }
+
+    handleChangeSL(event: React.ChangeEvent<HTMLInputElement>){
+        this.setState({sl: parseFloat(event.target.value)});
+        console.log(this.state);
+    }
+
+    handleChangeSW(event: React.ChangeEvent<HTMLInputElement>){
+        this.setState({sw: parseFloat(event.target.value)});
+    }
+
+    handleChangePL(event: React.ChangeEvent<HTMLInputElement>){
+        this.setState({pl: parseFloat(event.target.value)});
+    }
+
+    handleChangePW(event: React.ChangeEvent<HTMLInputElement>){
+        this.setState({pw: parseFloat(event.target.value)});
+    }
+
+    submitSample(event: React.FormEvent<HTMLFormElement>){
+        this.setState({test: new Sample(this.state.sl, this.state.sw, this.state.pl,this.state.pw,""), runTest: true})
         event.preventDefault();
-        if(this.fileDataInput.current != null && this.fileDataInput.current.files != null){
-            this.handleFileChosen(this.fileDataInput.current.files[0]);
-            // setTimeout(this.solveMap, 5000, this.table);
-        }
     }
-
-    handleFileChosen(file: File): void{
-        const reader = new FileReader();
-        let dataArray = new Array<Sample>();
-        reader.onload = (event) => {
-            let text: string | ArrayBuffer | null;
-            if(event != null && event.target != null ) {
-                text = event.target.result;
-                let lines = new Array<string>();
-                if(text != null && typeof(text) === "string") {
-                    lines = text.split(/[\r\n]+/g);
-                    lines.forEach((l) => {
-                        let rowData = new Array<string>();
-                        let row = l.split(',');
-                        if(row.length !== atributos.length){
-                            alert("El número de atributos no coincide con el número de datos");
-                            throw "El número de atributos no coincide con el número de datos";
-                        }
-                        if(row.length !== 1){
-                            let sample: Sample = new Sample(parseFloat(row[0]), parseFloat(row[1]), parseFloat(row[2]), parseFloat(row[3]), row[4]);
-                            dataArray.push(sample);
-                        }
-
-                    });
-                }
-            }
-        };
-        reader.readAsText(file);
-        console.log(dataArray);
-    }
-
     render(){
+        const {isLoaded} = this.state;
+        let m = <Loading></Loading>
+        if(isLoaded)
+            m = <p>Cargado</p>
         return (
             <div className="App">
                 <header className="App-header">
                     <h1>Algoritmos de clasificación - Iris</h1>
                 </header>
-                <form onSubmit={this.handleSubmit}>
-                    <div className={"line"}>
-                        <label>Selecciona el fichero de <b>ejemplos</b>: </label>
-                        <input type="file" accept=".txt" ref={this.fileDataInput} multiple={false} required={true} disabled={this.state.disabled}/>
-                    </div>
-                    <input type="submit" value="Realizar algoritmo" disabled={this.state.disabled}/>
+
+                {m}
+                <form onSubmit={this.submitSample}>
+                    <span>Sepal Length</span>
+                    <input type="number" step="0.01" required={true} value={this.state.sl} onChange={this.handleChangeSL}/>
+                    <span>Sepal Width</span>
+                    <input type="number" step="0.01" required={true} value={this.state.sw} onChange={this.handleChangeSW}/>
+                    <span>Petal Length</span>
+                    <input type="number" step="0.01" required={true} value={this.state.pl} onChange={this.handleChangePL}/>
+                    <span>Petal Width</span>
+                    <input type="number" step="0.01" required={true} value={this.state.pw} onChange={this.handleChangePW}/>
+                    <input type="submit" value="Comprobar"/>
                 </form>
                 <button>Original</button>
                 <button>KMeans</button>
                 <button>Bayes</button>
                 <button>Floyd</button>
-                <KMeans></KMeans>
+                <dataContext.Provider value={datos}>
+                    <KMeans data={this.state.datos} test={this.state.test} runTest={this.state.runTest}/>
+                </dataContext.Provider>
+
                 <footer>
                     <p>Pablo Miranda Torres</p>
                     <p>Ingeniería del Conocimiento</p>
@@ -87,3 +118,4 @@ class App extends React.Component {
 }
 
 export default App;
+
