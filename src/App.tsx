@@ -7,8 +7,6 @@ import {ReactComponent as Loading} from './Assets/spinner.svg';
 
 const atributos = ["sepal length", "sepal width", "petal length", "petal witdh", "class"];
 const datos = [] as any;
-//Context with global data
-const dataContext = React.createContext(datos);
 
 interface AppProps {
 }
@@ -42,14 +40,13 @@ class App extends React.Component<AppProps, AppState> {
     componentDidMount() {
         setTimeout(() => {
             this.setState({isLoaded: true});
-        }, 2000)
-
+        }, 2000);
     }
 
     createArray(d: any[]): Array<Sample>{
         let result: Array<Sample> = new Array<Sample>();
         d.forEach(r => {
-            result.push(new Sample(r["Sepal Length"], r["Sepal Width"], r["Petal Length"], r["Petal Length"], r["ClassName"]));
+            result.push(new Sample(r["Sepal Length"], r["Sepal Width"], r["Petal Length"], r["Petal Width"], r["ClassName"]));
         });
         return result;
     }
@@ -77,35 +74,35 @@ class App extends React.Component<AppProps, AppState> {
     }
     render(){
         const {isLoaded} = this.state;
-        let m = <Loading></Loading>
+        let m = <Loading/>
         if(isLoaded)
             m = <p>Cargado</p>
         return (
             <div className="App">
                 <header className="App-header">
-                    <h1>Algoritmos de clasificación - Iris</h1>
+                    <h1>Clasificación Iris - KMeans</h1>
                 </header>
+                <main>
+
+
 
                 {m}
-                <form onSubmit={this.submitSample}>
-                    <span>Sepal Length</span>
-                    <input type="number" step="0.01" required={true} value={this.state.sl} onChange={this.handleChangeSL}/>
-                    <span>Sepal Width</span>
-                    <input type="number" step="0.01" required={true} value={this.state.sw} onChange={this.handleChangeSW}/>
-                    <span>Petal Length</span>
-                    <input type="number" step="0.01" required={true} value={this.state.pl} onChange={this.handleChangePL}/>
-                    <span>Petal Width</span>
-                    <input type="number" step="0.01" required={true} value={this.state.pw} onChange={this.handleChangePW}/>
-                    <input type="submit" value="Comprobar"/>
-                </form>
-                <button>Original</button>
-                <button>KMeans</button>
-                <button>Bayes</button>
-                <button>Floyd</button>
-                <dataContext.Provider value={datos}>
+                <div className={"testContainer"}>
+                    <h4>Comprueba a qué clase pertenece una muestra:</h4>
+                    <form onSubmit={this.submitSample}>
+                        <span>Sepal Length: </span>
+                        <input type="number" step="0.1" required={true} value={this.state.sl} onChange={this.handleChangeSL}/>
+                        <span>Sepal Width: </span>
+                        <input type="number" step="0.1" required={true} value={this.state.sw} onChange={this.handleChangeSW}/>
+                        <span>Petal Length: </span>
+                        <input type="number" step="0.1" required={true} value={this.state.pl} onChange={this.handleChangePL}/>
+                        <span>Petal Width: </span>
+                        <input type="number" step="0.1" required={true} value={this.state.pw} onChange={this.handleChangePW}/>
+                        <input type="submit" value="Comprobar"/>
+                    </form>
+                </div>
                     <KMeans data={this.state.datos} test={this.state.test} runTest={this.state.runTest}/>
-                </dataContext.Provider>
-
+                </main>
                 <footer>
                     <p>Pablo Miranda Torres</p>
                     <p>Ingeniería del Conocimiento</p>

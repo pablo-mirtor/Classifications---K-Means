@@ -1,14 +1,9 @@
 import React from "react";
 import KMeansAlgorithm from "./KMeansAlgorithm";
 import Sample from "../DataStructures/Sample";
-import {
-    XAxis,
-    YAxis,
-    XYPlot,
-    MarkSeriesCanvas,
-    Borders,
-    Highlight, LineSeries, HorizontalGridLines
-} from 'react-vis';
+import Plots from "../Plots/Plots";
+
+const SIZE = 200;
 
 interface KMeansProps {
     data: Sample[],
@@ -29,38 +24,14 @@ class KMeans extends React.Component<KMeansProps, KMeansState>{
 
     render(){
         const {runTest} = this.props;
-        let res = <p>Hola</p>
+        let res = <p></p>
         if(runTest){
-            res = <p> La muestra pertenece a la clase {this.km.pertenencia(this.props.test)}</p>
+            res =(<p className={"resultTest"}> La muestra ({this.props.test.getSepalLength()}, {this.props.test.getSepalWidth()}, {this.props.test.getPetalLength()}, {this.props.test.getPetalWidth()})
+                pertenece a la clase <b>{this.km.pertenencia(this.props.test)}</b></p>)
         }
         return(<div>
             {res}
-            <XYPlot
-                width={300}
-                height={300}>
-                <MarkSeriesCanvas
-                    data={[{x: 1, y: 2}, {x:3, y:4}]}
-                    colorType="category"
-                    colorRange={['#19CDD7', 'red', '#88572C']}
-                    getOpacity={d => d.selected ? 1 : 0.1}
-                />
-                <Borders style={{all: {fill: '#fff'}}} />
-                <XAxis />
-                <YAxis />
-            </XYPlot>
-            <XYPlot
-                width={300}
-                height={300}>
-                <HorizontalGridLines />
-                <MarkSeriesCanvas
-                    data={[
-                        {x: 1, y: 10},
-                        {x: 2, y: 5},
-                        {x: 3, y: 15}
-                    ]}/>
-                <XAxis />
-                <YAxis />
-            </XYPlot>
+            <Plots data={this.props.data} centers={this.km.getCenters()} test={this.props.test} renderTest={this.props.runTest}></Plots>
         </div>);
     }
 

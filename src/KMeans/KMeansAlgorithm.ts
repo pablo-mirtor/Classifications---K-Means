@@ -73,6 +73,10 @@ class KMeansAlgorithm{
         }
     }
 
+    getCenters(): Sample[]{
+        return this.centers;
+    }
+
     pertenencia(muestra: Sample): string {
         let acumulados: Array<number> = new Array<number>();
         let acumD: number = 0.0;
@@ -96,10 +100,9 @@ class KMeansAlgorithm{
             return d;
         });
         if (indMax !== -1){
-            console.log(this.centers[indMax].getClassName())
             return this.centers[indMax].getClassName();
         }
-        else return "0";
+        else return "Not found";
     }
 }
 
