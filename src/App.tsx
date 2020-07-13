@@ -5,19 +5,16 @@ import Sample from "./DataStructures/Sample";
 import Iris2Clases from "./Iris2Clases";
 import {ReactComponent as Loading} from './Assets/spinner.svg';
 
-const atributos = ["sepal length", "sepal width", "petal length", "petal witdh", "class"];
-const datos = [] as any;
 
 interface AppProps {
 }
 
 interface AppState {
     datos: Sample[],
-    isLoaded: boolean,
-    sl: number,
-    sw: number,
-    pl: number,
-    pw: number,
+    sl: string,
+    sw: string,
+    pl: string,
+    pw: string,
     test: Sample,
     runTest: boolean
 }
@@ -28,19 +25,13 @@ class App extends React.Component<AppProps, AppState> {
         super(props);
         this.fileDataInput = React.createRef();
         //this.createArray = this.createArray.bind(this);
-        this.state = {datos: this.createArray(Iris2Clases), isLoaded: false, sl: 5.1, sw: 3.5, pl: 1.4, pw: 0.2, test: new Sample(-1,-1,-1,-1, ""), runTest: false};
+        this.state = {datos: this.createArray(Iris2Clases), sl: "5.1", sw: "3.5", pl: "1.4", pw: "0.2", test: new Sample(-1,-1,-1,-1, ""), runTest: false};
         this.createArray(Iris2Clases);
         this.submitSample = this.submitSample.bind(this);
         this.handleChangeSL = this.handleChangeSL.bind(this);
         this.handleChangePL = this.handleChangePL.bind(this);
         this.handleChangeSW = this.handleChangeSW.bind(this);
         this.handleChangePW = this.handleChangePW.bind(this);
-    }
-
-    componentDidMount() {
-        setTimeout(() => {
-            this.setState({isLoaded: true});
-        }, 2000);
     }
 
     createArray(d: any[]): Array<Sample>{
@@ -52,41 +43,34 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     handleChangeSL(event: React.ChangeEvent<HTMLInputElement>){
-        this.setState({sl: parseFloat(event.target.value)});
+        this.setState({sl: event.target.value});
         console.log(this.state);
     }
 
     handleChangeSW(event: React.ChangeEvent<HTMLInputElement>){
-        this.setState({sw: parseFloat(event.target.value)});
+        this.setState({sw: event.target.value});
     }
 
     handleChangePL(event: React.ChangeEvent<HTMLInputElement>){
-        this.setState({pl: parseFloat(event.target.value)});
+        this.setState({pl: event.target.value});
     }
 
     handleChangePW(event: React.ChangeEvent<HTMLInputElement>){
-        this.setState({pw: parseFloat(event.target.value)});
+        this.setState({pw: event.target.value});
     }
 
     submitSample(event: React.FormEvent<HTMLFormElement>){
-        this.setState({test: new Sample(this.state.sl, this.state.sw, this.state.pl,this.state.pw,""), runTest: true})
+        this.setState({test: new Sample(parseFloat(this.state.sl), parseFloat(this.state.sw), parseFloat(this.state.pl), parseFloat(this.state.pw),""), runTest: true})
         event.preventDefault();
     }
     render(){
-        const {isLoaded} = this.state;
-        let m = <Loading/>
-        if(isLoaded)
-            m = <p>Cargado</p>
+
         return (
             <div className="App">
                 <header className="App-header">
                     <h1>Clasificación Iris - KMeans</h1>
                 </header>
                 <main>
-
-
-
-                {m}
                 <div className={"testContainer"}>
                     <h4>Comprueba a qué clase pertenece una muestra:</h4>
                     <form onSubmit={this.submitSample}>

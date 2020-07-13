@@ -27,13 +27,13 @@ class KMeansAlgorithm{
         return u;
     }
     updateCenters(): boolean{
-        let ready: boolean = true;
+        let end: boolean = true;
         let u: number[][]= this.initializeArray();
         this.muestras.forEach((m, ind)=>{
             let ds: Array<number> = new Array<number>();
             let acum: number = 0.0;
             this.centers.forEach(c=>{
-                let d = c.getData().reduce((a, num, i, vec) => {
+                let d = c.getData().reduce((a, num, i) => {
                     return a + Math.pow(num - m.getData()[i], 2)}, 0.0);
                 ds.push(Math.pow(1/d, 1/(b-1)));
                 acum += Math.pow(1/d, 1/(b-1));
@@ -45,7 +45,7 @@ class KMeansAlgorithm{
 
         this.centers.forEach((c, i) => {
             let values: Array<number> = new Array<number>();
-            c.getData().forEach(d => values.push(0.0));
+            c.getData().forEach(() => values.push(0.0));
             let acumB: number = 0.0;
             this.muestras.forEach((m,j) => {
                 acumB+= Math.pow(u[i][j], b);
@@ -60,9 +60,9 @@ class KMeansAlgorithm{
                 return v;
             });
             c.setData(values);
-            ready = (acumC <= tolerancia);
+            end = (acumC <= tolerancia);
         });
-        return ready;
+        return end;
     }
 
     calcCenters(): void {
@@ -77,7 +77,7 @@ class KMeansAlgorithm{
         return this.centers;
     }
 
-    pertenencia(muestra: Sample): string {
+    belongsTo(muestra: Sample): string {
         let acumulados: Array<number> = new Array<number>();
         let acumD: number = 0.0;
         this.centers.forEach(c => {

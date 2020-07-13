@@ -3,8 +3,6 @@ import KMeansAlgorithm from "./KMeansAlgorithm";
 import Sample from "../DataStructures/Sample";
 import Plots from "../Plots/Plots";
 
-const SIZE = 200;
-
 interface KMeansProps {
     data: Sample[],
     test: Sample
@@ -27,7 +25,7 @@ class KMeans extends React.Component<KMeansProps, KMeansState>{
         let res = <p></p>
         if(runTest){
             res =(<p className={"resultTest"}> La muestra ({this.props.test.getSepalLength()}, {this.props.test.getSepalWidth()}, {this.props.test.getPetalLength()}, {this.props.test.getPetalWidth()})
-                pertenece a la clase <b>{this.km.pertenencia(this.props.test)}</b></p>)
+                pertenece a la clase <b>{this.km.belongsTo(this.props.test)}</b></p>)
         }
         return(<div>
             {res}

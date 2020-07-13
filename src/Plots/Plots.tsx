@@ -4,6 +4,7 @@ import {
     YAxis,
     XYPlot,
     Borders,
+    Hint,
     MarkSeries
 } from 'react-vis';
 
@@ -26,7 +27,6 @@ interface PlotProps{
     renderTest: boolean
 }
 interface PlotState{
-    filters: {}
 }
 
 interface PlotState{}
@@ -52,7 +52,7 @@ export default class Plots extends React.Component<PlotProps, PlotState> {
                                     }
 
                                     return (
-                                        <XYPlot height={SIZE} width={SIZE} key={`${xAxis}-${yAxis}`}>
+                                        <XYPlot height={SIZE} width={SIZE} key={`${xAxis}-${yAxis}`} onMouseLeave={() => this.setState({value: false})}>
                                             <MarkSeries
                                                 data={this.props.data.map(d => ({
                                                     x: d.getData()[i],
@@ -81,7 +81,7 @@ export default class Plots extends React.Component<PlotProps, PlotState> {
                                                     _sizeValue={6}
                                                     stroke={'black'}
                                                 />
-                                                : <p></p>}
+                                                : null}
                                             <Borders style={{all: {fill: '#fff'}}} />
                                             <XAxis title={xAxis}/>
                                             <YAxis title={yAxis}/>
