@@ -1,3 +1,5 @@
+This project reads the data from the file Iris2Clases.ts and applies the Kmeans algorithm.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
